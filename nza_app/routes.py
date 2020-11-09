@@ -6,7 +6,7 @@ from flask_login import login_required,login_user, current_user, logout_user
 
 @app.route('/notes/create', methods = ['GET', 'POST'])
 @login_required
-def posts():
+def create_note():
     form = NoteForm()
 
     if request.method == 'POST' and form.validate():
@@ -20,12 +20,6 @@ def posts():
         db.session.commit()
         return redirect(url_for('show_notes'))
     return render_template('newnote.html', form = form)
-
-# Create new note
-#     newnote.html
-
-# shows all notes for user
-#     notes.html
 
 @app.route('/notes')
 @login_required
@@ -59,6 +53,12 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html', login_form = form)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
 @app.route('/register', methods = ['GET','POST'])
 def register():
     form = UserInfoForm()
@@ -84,25 +84,16 @@ def register():
         
     return render_template('register.html',user_form = form)
 
-
 # Update Note Route -- 
 @app.route('/notes/update/<int:note_id>', methods = ['GET', 'POST'])
 @login_required
 def note_update(note_id): 
     note = Note.query.get_or_404(note_id)
     form = NoteForm()
-<<<<<<< HEAD
-
-=======
->>>>>>> e7c32581ecd7413ab2cf331c08a8ab44009a9d21
     if request.method == 'POST' and form.validate():
         case_name = form.case_name.data
         case_note = form.case_note.data
         user_id = current_user.id
-<<<<<<< HEAD
-
-=======
->>>>>>> e7c32581ecd7413ab2cf331c08a8ab44009a9d21
         # Update the Database with the new Info 
         note.case_name = case_name
         note.case_note = case_note
@@ -119,8 +110,19 @@ def note_delete(note_id):
     note = Note.query.get_or_404(note_id)
     db.session.delete(note)
     db.session.commit()
-<<<<<<< HEAD
     return redirect(url_for('show_notes'))
-=======
+
     return redirect(url_for('show_notes'))
->>>>>>> e7c32581ecd7413ab2cf331c08a8ab44009a9d21
+
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/what_we_do')
+def what_we_do():
+    return render_template('what.html')
